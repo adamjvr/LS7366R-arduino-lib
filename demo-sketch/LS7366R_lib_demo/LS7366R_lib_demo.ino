@@ -30,19 +30,49 @@ SOFTWARE.
 #define LS7366R_SPI_PORT SPI // Change this to the desired SPI port
 
 LS7366R encoder(LS7366R_CS_PIN, LS7366R_SPI_PORT);
-// uses the Arduino DUE Programming Port option when selecting which board to use in the Arduino IDE 
+
 void setup() {
     Serial.begin(9600);
     encoder.init();
 }
 
 void loop() {
-    encoder.clearCounter();
-    delay(1000);
-
+    // Read and print the counter value
     uint32_t count = encoder.readCounter();
     Serial.print("Counter: ");
     Serial.println(count);
 
-    delay(1000);
+    // Clear the counter and print the cleared value
+    encoder.clearCounter();
+    Serial.println("Counter Cleared");
+
+    // Read and print the status register
+    uint8_t status = encoder.readStatus();
+    Serial.print("Status Register: 0x");
+    Serial.println(status, HEX);
+
+    // Read and print the mode register
+    uint8_t mode = encoder.readMode();
+    Serial.print("Mode Register: 0x");
+    Serial.println(mode, HEX);
+
+    // Write a new mode to the mode register
+    encoder.writeMode(0x0F);
+    Serial.println("Mode Register Written");
+
+    // Load a value into the counter and print the new counter value
+    encoder.loadCounter(0x12345678);
+    Serial.println("Counter Loaded with 0x12345678");
+
+    // Load a value into the OTR (One Turn Register) and print the new OTR value
+    encoder.loadOTR(0xABCD1234);
+    Serial.println("OTR Loaded with 0xABCD1234");
+
+    // Read and print the OTR value
+    uint32_t otrValue = encoder.readOTR();
+    Serial.print("OTR Value: 0x");
+    Serial.println(otrValue, HEX);
+
+    // Delay for demonstration purposes
+    delay(5000);
 }
